@@ -1,0 +1,7 @@
+Junior Python Developer Intern
+
+We are looking for a student with Python, SQL, Git, REST API, and problem-solving skills.
+Responsibilities include building backend services with FastAPI, working with PostgreSQL,
+writing unit tests with pytest, and collaborating through GitHub. Familiarity with Docker,
+Pandas, data structures and algorithms, and React is a plus. Applicants should demonstrate
+a relevant academic project and clear communication.
