@@ -15,85 +15,87 @@
   <img alt="License" src="https://img.shields.io/badge/License-MIT-green.svg">
 </p>
 
-RoleFit is a full-stack portfolio project that compares a text-based PDF resume with a job description. It identifies skills found in both documents, highlights potential gaps, calculates explainable matching indicators, and suggests practical next steps.
+RoleFit is a full-stack portfolio project that compares a text-based PDF resume with a job description. It identifies matching skills, highlights potential skill gaps, calculates explainable matching indicators, and suggests practical next steps.
 
-> **Important:** Match scores are heuristic decision-support indicators, not probabilities of getting hired or guarantees of employability. Always review the extracted text and recommendations yourself.
+> **Important:** Match scores are heuristic indicators, not probabilities of getting hired or guarantees of employability. Review the extracted text and recommendations yourself.
 
 ## Contents
+
 - [Features](#features)
-- [Product preview](#product-preview)
-- [Tech stack](#tech-stack)
-- [How matching works](#how-matching-works)
+- [Product Preview](#product-preview)
+- [Tech Stack](#tech-stack)
+- [How Matching Works](#how-matching-works)
 - [Architecture](#architecture)
-- [Getting started](#getting-started)
-- [Run tests](#run-tests)
-- [API reference](#api-reference)
-- [Project structure](#project-structure)
-- [Limitations and responsible use](#limitations-and-responsible-use)
+- [Getting Started](#getting-started)
+- [Run Tests](#run-tests)
+- [API Reference](#api-reference)
+- [Project Structure](#project-structure)
+- [Limitations and Responsible Use](#limitations-and-responsible-use)
 - [Roadmap](#roadmap)
 - [License](#license)
 
 ## Features
-- **PDF resume parsing:** extract text from text-based PDFs using `pypdf`.
-- **Job description analysis:** paste a job description and provide a role title.
-- **Skill extraction:** detect skills using a maintained, controlled dictionary.
-- **Explainable matching:** show skill coverage, TF-IDF cosine similarity, and experience-keyword overlap separately.
-- **Skill gap analysis:** display matched skills and skills detected in the job description but not in the resume text.
-- **Preparation plan:** generate suggested learning actions and practical deliverables for missing skills.
-- **Analysis history:** save, reopen, compare, and delete previous analyses.
-- **REST API:** expose analysis and history operations through FastAPI.
-- **Database flexibility:** use SQLite locally or configure PostgreSQL.
-- **Developer tooling:** pytest tests, Dockerfiles, Docker Compose, and environment examples.
 
-## Product preview
+- **PDF Resume Parsing:** Extract text from text-based PDF resumes using `pypdf`.
+- **Job Description Analysis:** Enter a target role and paste its job description.
+- **Skill Extraction:** Detect known technical skills using a controlled dictionary.
+- **Explainable Matching:** Display skill coverage, TF-IDF cosine similarity, and experience-keyword overlap separately.
+- **Skill Gap Analysis:** Identify skills found in the job description but not detected in the resume.
+- **Preparation Plan:** Generate suggested learning actions for potential skill gaps.
+- **Analysis History:** Save, reopen, compare, and delete previous analyses.
+- **REST API:** Expose analysis and history operations through FastAPI.
+- **Database Flexibility:** Use SQLite locally or configure PostgreSQL.
+- **Developer Tooling:** Include tests, Dockerfiles, Docker Compose, and environment examples.
 
-Add screenshots of your **actual running application** to `docs/screenshots/`, then uncomment and update the image paths below.
+## Product Preview
 
-<!--
+### Dashboard
+
 <p align="center">
   <img src="docs/screenshots/dashboard.png" alt="RoleFit dashboard" width="850">
 </p>
+
+### Resume Analysis Results
+
 <p align="center">
-  <img src="docs/screenshots/analysis-results.png" alt="RoleFit analysis results" width="850">
+  <img src="docs/screenshots/analysis-results.png" alt="RoleFit resume analysis results" width="850">
 </p>
--->
 
-Suggested screenshots:
-1. `dashboard.png` — the new-analysis form.
-2. `analysis-results.png` — match score and metric cards.
-3. `skills-comparison.png` — matched and missing skills.
-4. `preparation-plan.png` — learning recommendations.
+### Skills Comparison
 
-Use a fictional/sample resume or redact personal details before publishing screenshots.
+<p align="center">
+  <img src="docs/screenshots/skills-comparison.png" alt="RoleFit matched and missing skills comparison" width="850">
+</p>
 
-## Tech stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |---|---|---|
 | Frontend | React, TypeScript, Vite | Interactive dashboard |
-| Backend | Python, FastAPI | REST endpoints and validation |
-| PDF parsing | pypdf | Extract text from PDF resumes |
+| Backend | Python, FastAPI | REST API and validation |
+| PDF Parsing | pypdf | Extract resume text |
 | Matching | scikit-learn | TF-IDF and cosine similarity |
-| Skill extraction | Python regular expressions and controlled dictionary | Detect known skills |
+| Skill Extraction | Python regular expressions and a controlled dictionary | Detect known skills |
 | Persistence | SQLAlchemy, SQLite / PostgreSQL | Save analysis history |
-| Testing | pytest, FastAPI TestClient | Test matching and API behavior |
-| Development | Git, Docker, Docker Compose | Version control and local setup |
+| Testing | pytest, FastAPI TestClient | Test backend behavior |
+| Development | Git, Docker, Docker Compose | Version control and containerization |
 
-## How matching works
+## How Matching Works
 
-1. Extract text from the uploaded PDF.
-2. Detect known skills in the resume and job description using a controlled dictionary.
-3. Calculate skill coverage as the proportion of detected job skills also detected in the resume.
+1. Extract text from the uploaded PDF resume.
+2. Detect known skills in the resume and job description.
+3. Calculate skill coverage based on detected job skills also detected in the resume.
 4. Calculate text similarity using TF-IDF vectors and cosine similarity.
-5. Estimate experience-keyword overlap using a small set of experience-related terms.
+5. Estimate experience-keyword overlap using selected experience-related terms.
 6. Generate a preparation plan from detected missing skills.
 
-The current combined score is a transparent, hand-weighted heuristic:
-- Skill coverage: **60%**
-- TF-IDF text similarity: **30%**
-- Experience-keyword overlap: **10%**
+The combined score uses a hand-weighted heuristic:
 
-These weights are **not calibrated against hiring outcomes**. The dictionary can miss synonyms or detect terms without understanding context. A missing skill means it was not detected in extracted resume text; it does not prove the candidate lacks that skill.
+- **Skill coverage:** 60%
+- **TF-IDF text similarity:** 30%
+- **Experience-keyword overlap:** 10%
+
+These weights are not calibrated against hiring outcomes. The skill dictionary may miss synonyms or detect terms without understanding context. A missing skill means it was not detected in the extracted resume text; it does not prove the candidate lacks that skill.
 
 ## Architecture
 
@@ -104,32 +106,34 @@ React + TypeScript (Vite)
           v
        FastAPI
           |
-          +--> pypdf text extraction
-          +--> skill dictionary + TF-IDF matcher
-          +--> learning-plan generation
+          +--> PDF text extraction (pypdf)
+          +--> Skill dictionary and TF-IDF matcher
+          +--> Learning-plan generation
           |
           v
-SQLAlchemy --> SQLite (default) / PostgreSQL (configured)
+      SQLAlchemy
+          |
+          +--> SQLite (default)
+          +--> PostgreSQL (when configured)
 ```
 
-## Getting started
+## Getting Started
 
 ### Prerequisites
+
 - Python 3.11 or newer
-- Node.js 20 or newer (includes npm)
+- Node.js 20 or newer, including npm
 - Git
 - Optional: Docker Desktop
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/AI-Powered-Job-Match-Resume-Analyzer.git
+git clone https://github.com/ayushvijaycode/AI-Powered-Job-Match-Resume-Analyzer.git
 cd AI-Powered-Job-Match-Resume-Analyzer
 ```
 
-Replace `YOUR_USERNAME` with the GitHub account that owns the repository.
-
-### 2. Start the backend
+### 2. Start the Backend
 
 From the repository root:
 
@@ -142,20 +146,21 @@ cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-On Windows PowerShell, activate the environment with:
+On Windows PowerShell, activate the environment using:
 
 ```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-API: `http://127.0.0.1:8000`  
-Interactive API docs: `http://127.0.0.1:8000/docs`
+Backend API: `http://127.0.0.1:8000`
 
-SQLite is the default database, so PostgreSQL is not required for a first local run.
+Interactive API documentation: `http://127.0.0.1:8000/docs`
 
-### 3. Start the frontend
+SQLite is the default database, so PostgreSQL is not required for a basic local setup.
 
-Open a **second terminal** from the repository root:
+### 3. Start the Frontend
+
+Open a second terminal from the repository root:
 
 ```bash
 cd frontend
@@ -165,63 +170,65 @@ npm run dev
 
 Open the local URL printed by Vite, usually `http://localhost:5173`.
 
-The frontend defaults to `http://127.0.0.1:8000` for the API. To override it, create `frontend/.env` based on `frontend/.env.example` and set `VITE_API_BASE_URL`.
+The frontend defaults to `http://127.0.0.1:8000` for the API. To override it, configure `VITE_API_BASE_URL` in `frontend/.env` using the provided environment example.
 
-### 4. Try an analysis
+### 4. Try an Analysis
+
 1. Upload a text-based PDF resume smaller than 5 MB.
-2. Paste a job description of at least 40 characters.
+2. Enter a target role and paste a job description of at least 40 characters.
 3. Click **Analyze my fit**.
-4. Review the score components, matched skills, missing skills, and preparation plan.
-5. Run another analysis to explore saved history and comparisons.
+4. Review the match score, score components, matched skills, potential skill gaps, and preparation plan.
+5. Run additional analyses to explore history and comparisons.
 
 Scanned/image-only PDFs are not supported because OCR is not enabled.
 
-## Run tests
+## Run Tests
 
-From `backend/` with the virtual environment activated:
+From `backend/`, with the virtual environment activated:
 
 ```bash
 pytest
 ```
 
-The tests cover skill extraction, bounded heuristic scores, the health endpoint, and invalid upload handling. Run the tests in your own environment before relying on them as a release check.
+Run the tests in your own environment before relying on them as a release check.
 
-## API reference
+## API Reference
 
-With the backend running, open `http://127.0.0.1:8000/docs` for interactive Swagger documentation.
+Start the backend and open `http://127.0.0.1:8000/docs` for interactive Swagger documentation.
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/health` | API health check |
-| `POST` | `/api/analyze` | Upload a PDF and analyze it against a job description |
+| `POST` | `/api/analyze` | Analyze a PDF resume against a job description |
 | `GET` | `/api/analyses` | List recent saved analyses |
-| `GET` | `/api/analyses/{id}` | Retrieve one saved analysis |
-| `DELETE` | `/api/analyses/{id}` | Delete one saved analysis |
+| `GET` | `/api/analyses/{id}` | Retrieve a saved analysis |
+| `DELETE` | `/api/analyses/{id}` | Delete a saved analysis |
 
-## Project structure
+## Project Structure
 
 ```text
 .
 ├── backend/
 │   ├── app/
-│   │   ├── main.py          # FastAPI endpoints
-│   │   ├── matcher.py       # Skill extraction and matching indicators
-│   │   ├── parser.py        # PDF text extraction
-│   │   ├── models.py        # SQLAlchemy model
-│   │   ├── schemas.py       # API response schemas
-│   │   ├── database.py      # Database setup
-│   │   └── config.py        # Environment configuration
+│   │   ├── main.py
+│   │   ├── matcher.py
+│   │   ├── parser.py
+│   │   ├── models.py
+│   │   ├── schemas.py
+│   │   ├── database.py
+│   │   └── config.py
 │   ├── tests/
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx
-│   │   ├── styles.css
-│   │   ├── main.tsx
-│   │   └── types.ts
 │   ├── package.json
 │   └── Dockerfile
+├── docs/
+│   └── screenshots/
+│       ├── dashboard.png
+│       ├── analysis-results.png
+│       └── skills-comparison.png
 ├── sample_data/
 ├── docker-compose.yml
 ├── PROJECT_INFO.md
@@ -229,24 +236,27 @@ With the backend running, open `http://127.0.0.1:8000/docs` for interactive Swag
 └── LICENSE
 ```
 
-## Limitations and responsible use
+## Limitations and Responsible Use
 
-- **Text-based PDFs only:** scanned PDFs require OCR, which is not implemented.
-- **Controlled skill vocabulary:** skills outside the dictionary and many synonyms may not be recognized.
-- **Heuristic scores:** weights are not trained or calibrated against hiring outcomes.
-- **Simple experience signal:** keyword overlap does not verify the length or quality of experience.
-- **Single-user development MVP:** authentication and per-user authorization are not implemented. Do not expose this version publicly for real resumes without access control, secure file handling, retention/deletion policies, rate limiting, and privacy notices.
-- **Human review required:** intended for job-seeker preparation, not automated hiring decisions.
+- **Text-based PDFs only:** Scanned PDFs require OCR, which is not implemented.
+- **Controlled skill vocabulary:** Some skills, synonyms, and alternative spellings may not be recognized.
+- **Heuristic scores:** The weights are not trained or calibrated against actual hiring outcomes.
+- **Simple experience signal:** Keyword overlap does not verify the duration or quality of experience.
+- **Development MVP:** Authentication and per-user authorization are not implemented. Do not expose this version publicly for real resumes without appropriate access controls, secure file handling, privacy notices, retention/deletion policies, and rate limiting.
+- **Human review required:** RoleFit is intended to support job-seeker preparation, not automated hiring decisions.
 
 ## Roadmap
+
 - [ ] Add authentication and per-user analysis isolation.
-- [ ] Add opt-in OCR support for scanned resumes.
-- [ ] Expand skill taxonomy and synonym handling.
-- [ ] Compare TF-IDF with sentence embeddings on a manually labeled evaluation set.
-- [ ] Report retrieval metrics and document evaluation methodology.
-- [ ] Add CI with automated tests and frontend build checks.
-- [ ] Deploy a demo with privacy-conscious sample data.
+- [ ] Add optional OCR support for scanned resumes.
+- [ ] Expand the skill taxonomy and synonym handling.
+- [ ] Compare TF-IDF with sentence embeddings using a manually labeled evaluation dataset.
+- [ ] Document evaluation methodology and matching metrics.
+- [ ] Add CI for automated tests and frontend build checks.
+- [ ] Deploy a demo using privacy-conscious sample data.
 
 ## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 Distributed under the MIT License. See [`LICENSE`](LICENSE).
