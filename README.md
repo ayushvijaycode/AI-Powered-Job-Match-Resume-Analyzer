@@ -1,55 +1,161 @@
-# AI-Powered Job Match & Resume Analyzer
+# RoleFit — AI-Powered Job Match & Resume Analyzer
 
-A full-stack portfolio project that parses PDF resumes, compares them with job descriptions, explains matched and missing skills, creates a practical learning plan, and saves analysis history.
+<p align="center">
+  <strong>Understand your fit for a role. Find skill gaps. Build your next-step plan.</strong>
+</p>
+
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
+  <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white">
+  <img alt="React" src="https://img.shields.io/badge/Frontend-React-61DAFB?logo=react&logoColor=black">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript&logoColor=white">
+  <img alt="scikit-learn" src="https://img.shields.io/badge/ML-scikit--learn-F7931E?logo=scikitlearn&logoColor=white">
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/DevOps-Docker-2496ED?logo=docker&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-green.svg">
+</p>
+
+RoleFit is a full-stack portfolio project that compares a text-based PDF resume with a job description. It identifies skills found in both documents, highlights potential gaps, calculates explainable matching indicators, and suggests practical next steps.
+
+> **Important:** Match scores are heuristic decision-support indicators, not probabilities of getting hired or guarantees of employability. Always review the extracted text and recommendations yourself.
+
+## Contents
+- [Features](#features)
+- [Product preview](#product-preview)
+- [Tech stack](#tech-stack)
+- [How matching works](#how-matching-works)
+- [Architecture](#architecture)
+- [Getting started](#getting-started)
+- [Run tests](#run-tests)
+- [API reference](#api-reference)
+- [Project structure](#project-structure)
+- [Limitations and responsible use](#limitations-and-responsible-use)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 ## Features
-- PDF resume upload and text extraction (`pypdf`)
-- Job-description input and controlled skill extraction
-- Explainable matching indicators: required-skill coverage, experience keyword overlap, and TF-IDF cosine similarity
-- Matched, missing, and additional skills
-- Personalized preparation plan based on missing skills
-- Saved analysis history and job comparison dashboard
-- FastAPI REST API, PostgreSQL-ready persistence, SQLite local fallback
-- React + TypeScript + Vite frontend
-- Unit tests, Docker Compose, environment examples
+- **PDF resume parsing:** extract text from text-based PDFs using `pypdf`.
+- **Job description analysis:** paste a job description and provide a role title.
+- **Skill extraction:** detect skills using a maintained, controlled dictionary.
+- **Explainable matching:** show skill coverage, TF-IDF cosine similarity, and experience-keyword overlap separately.
+- **Skill gap analysis:** display matched skills and skills detected in the job description but not in the resume text.
+- **Preparation plan:** generate suggested learning actions and practical deliverables for missing skills.
+- **Analysis history:** save, reopen, compare, and delete previous analyses.
+- **REST API:** expose analysis and history operations through FastAPI.
+- **Database flexibility:** use SQLite locally or configure PostgreSQL.
+- **Developer tooling:** pytest tests, Dockerfiles, Docker Compose, and environment examples.
 
-> Scores are heuristic decision-support indicators, **not hiring probabilities**, guarantees of employability, or objective judgments of candidate quality. The tool does not infer protected characteristics. Validate extracted skills and text because PDF formatting can cause extraction errors.
+## Product preview
+
+Add screenshots of your **actual running application** to `docs/screenshots/`, then uncomment and update the image paths below.
+
+<!--
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" alt="RoleFit dashboard" width="850">
+</p>
+<p align="center">
+  <img src="docs/screenshots/analysis-results.png" alt="RoleFit analysis results" width="850">
+</p>
+-->
+
+Suggested screenshots:
+1. `dashboard.png` — the new-analysis form.
+2. `analysis-results.png` — match score and metric cards.
+3. `skills-comparison.png` — matched and missing skills.
+4. `preparation-plan.png` — learning recommendations.
+
+Use a fictional/sample resume or redact personal details before publishing screenshots.
+
+## Tech stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend | React, TypeScript, Vite | Interactive dashboard |
+| Backend | Python, FastAPI | REST endpoints and validation |
+| PDF parsing | pypdf | Extract text from PDF resumes |
+| Matching | scikit-learn | TF-IDF and cosine similarity |
+| Skill extraction | Python regular expressions and controlled dictionary | Detect known skills |
+| Persistence | SQLAlchemy, SQLite / PostgreSQL | Save analysis history |
+| Testing | pytest, FastAPI TestClient | Test matching and API behavior |
+| Development | Git, Docker, Docker Compose | Version control and local setup |
+
+## How matching works
+
+1. Extract text from the uploaded PDF.
+2. Detect known skills in the resume and job description using a controlled dictionary.
+3. Calculate skill coverage as the proportion of detected job skills also detected in the resume.
+4. Calculate text similarity using TF-IDF vectors and cosine similarity.
+5. Estimate experience-keyword overlap using a small set of experience-related terms.
+6. Generate a preparation plan from detected missing skills.
+
+The current combined score is a transparent, hand-weighted heuristic:
+- Skill coverage: **60%**
+- TF-IDF text similarity: **30%**
+- Experience-keyword overlap: **10%**
+
+These weights are **not calibrated against hiring outcomes**. The dictionary can miss synonyms or detect terms without understanding context. A missing skill means it was not detected in extracted resume text; it does not prove the candidate lacks that skill.
 
 ## Architecture
-- `backend/`: FastAPI API, PDF extraction, matching engine, SQLAlchemy persistence, tests
-- `frontend/`: React/TypeScript single-page application
-- `docker-compose.yml`: frontend, backend, PostgreSQL
-- `sample_data/`: example job description (no personal resume data)
 
-## Run locally (recommended first run)
+```text
+React + TypeScript (Vite)
+          |
+          | HTTP / JSON + multipart PDF upload
+          v
+       FastAPI
+          |
+          +--> pypdf text extraction
+          +--> skill dictionary + TF-IDF matcher
+          +--> learning-plan generation
+          |
+          v
+SQLAlchemy --> SQLite (default) / PostgreSQL (configured)
+```
 
-### 1. Requirements
-- Python 3.11+
-- Node.js 20+
+## Getting started
+
+### Prerequisites
+- Python 3.11 or newer
+- Node.js 20 or newer (includes npm)
 - Git
 - Optional: Docker Desktop
 
-### 2. Backend
-Open a terminal in the project root:
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/AI-Powered-Job-Match-Resume-Analyzer.git
+cd AI-Powered-Job-Match-Resume-Analyzer
+```
+
+Replace `YOUR_USERNAME` with the GitHub account that owns the repository.
+
+### 2. Start the backend
+
+From the repository root:
 
 ```bash
 cd backend
-python -m venv .venv
-# macOS/Linux:
+python3 -m venv .venv
 source .venv/bin/activate
-# Windows PowerShell:
-# .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-API docs: http://127.0.0.1:8000/docs
+On Windows PowerShell, activate the environment with:
 
-The default database is local SQLite (`sqlite:///./job_match.db`) so it runs without PostgreSQL. To use PostgreSQL, set `DATABASE_URL` in `backend/.env`, e.g. `postgresql+psycopg://postgres:yourpassword@localhost:5432/jobmatch`.
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
-### 3. Frontend
-In a second terminal from the project root:
+API: `http://127.0.0.1:8000`  
+Interactive API docs: `http://127.0.0.1:8000/docs`
+
+SQLite is the default database, so PostgreSQL is not required for a first local run.
+
+### 3. Start the frontend
+
+Open a **second terminal** from the repository root:
 
 ```bash
 cd frontend
@@ -57,60 +163,90 @@ npm install
 npm run dev
 ```
 
-Open the URL printed by Vite (usually http://localhost:5173). The frontend expects the API at `http://127.0.0.1:8000`; set `VITE_API_BASE_URL` in `frontend/.env` if needed.
+Open the local URL printed by Vite, usually `http://localhost:5173`.
+
+The frontend defaults to `http://127.0.0.1:8000` for the API. To override it, create `frontend/.env` based on `frontend/.env.example` and set `VITE_API_BASE_URL`.
+
+### 4. Try an analysis
+1. Upload a text-based PDF resume smaller than 5 MB.
+2. Paste a job description of at least 40 characters.
+3. Click **Analyze my fit**.
+4. Review the score components, matched skills, missing skills, and preparation plan.
+5. Run another analysis to explore saved history and comparisons.
+
+Scanned/image-only PDFs are not supported because OCR is not enabled.
 
 ## Run tests
-From `backend/` with its virtual environment active:
+
+From `backend/` with the virtual environment activated:
 
 ```bash
 pytest
 ```
 
-## Run with Docker Compose
-Install Docker Desktop, then from the project root:
+The tests cover skill extraction, bounded heuristic scores, the health endpoint, and invalid upload handling. Run the tests in your own environment before relying on them as a release check.
 
-```bash
-docker compose up --build
-```
+## API reference
 
-- Frontend: http://localhost:5173
-- API docs: http://localhost:8000/docs
-- PostgreSQL: localhost:5432
+With the backend running, open `http://127.0.0.1:8000/docs` for interactive Swagger documentation.
 
-Docker Compose configures PostgreSQL for the backend. Change the sample database password before using this setup beyond local development.
-
-## API endpoints
-| Method | Endpoint | Purpose |
+| Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/health` | Health check |
-| `POST` | `/api/analyze` | Upload PDF + job description; analyze and save |
-| `GET` | `/api/analyses` | List saved analyses |
-| `GET` | `/api/analyses/{id}` | Fetch one analysis |
+| `GET` | `/health` | API health check |
+| `POST` | `/api/analyze` | Upload a PDF and analyze it against a job description |
+| `GET` | `/api/analyses` | List recent saved analyses |
+| `GET` | `/api/analyses/{id}` | Retrieve one saved analysis |
 | `DELETE` | `/api/analyses/{id}` | Delete one saved analysis |
 
-## Matching approach
-1. Extract PDF text with `pypdf`.
-2. Normalize text and find skills from a maintained dictionary using word-boundary matching.
-3. Compute required-skill coverage from the job description's extracted skills.
-4. Compute TF-IDF cosine similarity between resume text and job description.
-5. Estimate experience relevance using a small overlap of experience-related keywords.
-6. Generate learning recommendations for missing skills.
+## Project structure
 
-The dashboard displays the components separately so a user can understand why a score was produced. The combined score is a transparent weighted heuristic, not a calibrated model.
+```text
+.
+├── backend/
+│   ├── app/
+│   │   ├── main.py          # FastAPI endpoints
+│   │   ├── matcher.py       # Skill extraction and matching indicators
+│   │   ├── parser.py        # PDF text extraction
+│   │   ├── models.py        # SQLAlchemy model
+│   │   ├── schemas.py       # API response schemas
+│   │   ├── database.py      # Database setup
+│   │   └── config.py        # Environment configuration
+│   ├── tests/
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx
+│   │   ├── styles.css
+│   │   ├── main.tsx
+│   │   └── types.ts
+│   ├── package.json
+│   └── Dockerfile
+├── sample_data/
+├── docker-compose.yml
+├── PROJECT_INFO.md
+├── README.md
+└── LICENSE
+```
 
-## Improve it responsibly
-- Add OCR as an opt-in feature for scanned PDFs.
-- Evaluate skill extraction and retrieval against a manually labeled dataset.
-- Compare TF-IDF with sentence embeddings and report precision/recall or ranking metrics.
-- Add authentication and per-user authorization before deploying for multiple users.
-- Add rate limiting, malware scanning, file retention controls, and privacy notices for production.
-- Never use this prototype as an automated hiring decision system.
+## Limitations and responsible use
 
-## Troubleshooting
-- **No text extracted:** the PDF may be scanned; this starter supports text-based PDFs. Try an OCR-enabled version or a text-based PDF.
-- **Frontend cannot reach API:** confirm the backend is running on port 8000 and check `VITE_API_BASE_URL`.
-- **Database connection fails:** remove `DATABASE_URL` from `.env` to use SQLite locally, or verify PostgreSQL credentials.
-- **PDF rejected:** upload a PDF under 5 MB.
+- **Text-based PDFs only:** scanned PDFs require OCR, which is not implemented.
+- **Controlled skill vocabulary:** skills outside the dictionary and many synonyms may not be recognized.
+- **Heuristic scores:** weights are not trained or calibrated against hiring outcomes.
+- **Simple experience signal:** keyword overlap does not verify the length or quality of experience.
+- **Single-user development MVP:** authentication and per-user authorization are not implemented. Do not expose this version publicly for real resumes without access control, secure file handling, retention/deletion policies, rate limiting, and privacy notices.
+- **Human review required:** intended for job-seeker preparation, not automated hiring decisions.
+
+## Roadmap
+- [ ] Add authentication and per-user analysis isolation.
+- [ ] Add opt-in OCR support for scanned resumes.
+- [ ] Expand skill taxonomy and synonym handling.
+- [ ] Compare TF-IDF with sentence embeddings on a manually labeled evaluation set.
+- [ ] Report retrieval metrics and document evaluation methodology.
+- [ ] Add CI with automated tests and frontend build checks.
+- [ ] Deploy a demo with privacy-conscious sample data.
 
 ## License
-MIT. See `LICENSE`.
+
+Distributed under the MIT License. See [`LICENSE`](LICENSE).
