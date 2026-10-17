@@ -4,6 +4,12 @@
   <strong>Understand your fit for a role. Find skill gaps. Build your next-step plan.</strong>
 </p>
 
+## 🚀 Live Demo
+
+**Try RoleFit here:** [Open Live Application](https://ai-powered-job-match-resume-analyze.vercel.app/)
+
+Upload your resume, paste a job description, and analyze your job match score, matched skills, and missing skills.
+
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
   <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white">
