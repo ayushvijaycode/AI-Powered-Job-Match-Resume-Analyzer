@@ -123,92 +123,103 @@ React + TypeScript (Vite)
           +--> PostgreSQL (when configured)
 ```
 
-## Getting Started
 
-### Prerequisites
+## 🚀 Getting Started
 
-- Python 3.11 or newer
-- Node.js 20 or newer, including npm
+The frontend is deployed on Vercel, and the backend API is hosted on Render.
+
+### 💻 Run Locally
+
+Follow these steps to run RoleFit on your local machine.
+
+#### Prerequisites
+
+- Node.js and npm
+- Python 3.10+
 - Git
-- Optional: Docker Desktop
 
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/ayushvijaycode/AI-Powered-Job-Match-Resume-Analyzer.git
 cd AI-Powered-Job-Match-Resume-Analyzer
 ```
 
-### 2. Start the Backend
-
-From the repository root:
+#### 2. Set Up the Backend
 
 ```bash
 cd backend
-python3 -m venv .venv
+python -m venv .venv
+```
+
+Activate the virtual environment:
+
+**macOS / Linux**
+```bash
 source .venv/bin/activate
+```
+
+**Windows**
+```bash
+.venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
-cp .env.example .env
+```
+
+Start the backend:
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-On Windows PowerShell, activate the environment using:
+The API will be available at `http://127.0.0.1:8000`.
 
-```powershell
-.venv\Scripts\Activate.ps1
-```
+API documentation: `http://127.0.0.1:8000/docs`
 
-Backend API: `http://127.0.0.1:8000`
+#### 3. Set Up the Frontend
 
-Interactive API documentation: `http://127.0.0.1:8000/docs`
-
-SQLite is the default database, so PostgreSQL is not required for a basic local setup.
-
-### 3. Start the Frontend
-
-Open a second terminal from the repository root:
+Open a new terminal from the project root:
 
 ```bash
 cd frontend
 npm install
+```
+
+Create a `.env` file inside the `frontend` directory:
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+Start the frontend:
+
+```bash
 npm run dev
 ```
 
-Open the local URL printed by Vite, usually `http://localhost:5173`.
+Open the local URL displayed in the terminal, usually `http://localhost:5173`.
 
-The frontend defaults to `http://127.0.0.1:8000` for the API. To override it, configure `VITE_API_BASE_URL` in `frontend/.env` using the provided environment example.
+### ⚙️ Configuration
 
-### 4. Try an Analysis
+The frontend uses `VITE_API_BASE_URL` to identify the backend API.
 
-1. Upload a text-based PDF resume smaller than 5 MB.
-2. Enter a target role and paste a job description of at least 40 characters.
-3. Click **Analyze my fit**.
-4. Review the match score, score components, matched skills, potential skill gaps, and preparation plan.
-5. Run additional analyses to explore history and comparisons.
+For local development, set it to:
 
-Scanned/image-only PDFs are not supported because OCR is not enabled.
+`http://127.0.0.1:8000`
 
-## Run Tests
+For production, the deployed frontend uses the Render backend URL configured in Vercel.
 
-From `backend/`, with the virtual environment activated:
+Refer to `backend/.env.example` for the backend configuration options.
 
-```bash
-pytest
-```
+### 📝 Notes
 
-Run the tests in your own environment before relying on them as a release check.
-
-## API Reference
-
-Start the backend and open `http://127.0.0.1:8000/docs` for interactive Swagger documentation.
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | API health check |
-| `POST` | `/api/analyze` | Analyze a PDF resume against a job description |
-| `GET` | `/api/analyses` | List recent saved analyses |
-| `GET` | `/api/analyses/{id}` | Retrieve a saved analysis |
-| `DELETE` | `/api/analyses/{id}` | Delete a saved analysis |
+- Keep the backend running while using the locally hosted frontend.
+- Configure the backend's `CORS_ORIGINS` to allow the frontend origin.
+- Do not commit `.env` files containing secrets or credentials.
 
 ## Project Structure
 
